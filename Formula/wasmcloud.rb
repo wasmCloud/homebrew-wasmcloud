@@ -1,4 +1,4 @@
-class WasmCloud < Formula
+class Wasmcloud < Formula
   desc "A secure, distributed, WebAssembly actor model runtime for the cloud, edge, and everything in between"
   homepage "https://wasmcloud.dev"
   url "https://github.com/wasmCloud/wasmCloud/archive/v0.15.0.tar.gz"
