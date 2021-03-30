@@ -1,8 +1,8 @@
 class Wasmcloud < Formula
   desc "A secure, distributed, WebAssembly actor model runtime for the cloud, edge, and everything in between"
   homepage "https://wasmcloud.dev"
-  url "https://github.com/wasmCloud/wasmCloud/archive/v0.15.3.tar.gz"
-  sha256 "50d4ab03bfa76c40b01585be4137f996cce899753f943185135e301d26452beb"
+  url "https://github.com/wasmCloud/wasmCloud/archive/v0.16.0.tar.gz"
+  sha256 "99ad0219b1ac23d6ce0956c4527dfde08b8e6775d9cda471ee389ba1ca0c2c54"
   license "Apache-2.0"
 
   depends_on "rust" => :build
