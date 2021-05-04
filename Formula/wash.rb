@@ -1,8 +1,8 @@
 class Wash < Formula
   desc "WAsmcloud SHell - A multi-tool for various wasmCloud activities as well as an interactive REPL for a wasmCloud runtime host."
   homepage "https://wasmcloud.dev"
-  url "https://github.com/wasmCloud/wash/archive/v0.4.3.tar.gz"
-  sha256 "a80092b88c1d27153fc0c314f186dc1973809c7ec3adcc9b352f41285a864e9d"
+  url "https://github.com/wasmCloud/wash/archive/v0.4.4.tar.gz"
+  sha256 "1613ae7c128458cd948a1006171f11fade8a613f597c666d410c5fdc481d83e8"
   license "Apache-2.0"
 
   depends_on "rust" => :build
