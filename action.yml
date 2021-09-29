@@ -1,0 +1,25 @@
+name: "wasmCloud Brew Automation"
+description: "Automates wasmCloud Brew requirements"
+inputs:
+  repo:
+    description: "Name of tool for updating"
+    required: true
+  releasetag:
+    description: "Release tag"
+    required: true
+  releasesha:
+    description: "Release bundle sha"
+    required: true
+outputs:
+  status:
+    description: "Name of new Ruby file"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - -repo
+    - ${{ inputs.repo }}
+    - -sha 
+    - ${{ inputs.releasesha }}
+    - -tag
+    - ${{ inputs.releasetag }}
