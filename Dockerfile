@@ -24,5 +24,5 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /go/bin/wcbrew /go/bin/wcbrew
 
-USER user:user
+#USER user:user
 ENTRYPOINT ["/go/bin/wcbrew"]
