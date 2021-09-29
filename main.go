@@ -1,13 +1,18 @@
 package main
 
 import (
+	"embed"
 	"errors"
 	"flag"
 	"os"
 	"text/template"
 )
 
+//go:embed templates/*
+var content embed.FS
+
 func main() {
+
 	var repo, releasetag, releasesha string
 	flag.StringVar(&repo, "repo", "", "Name of repo to generate brew update")
 	flag.StringVar(&releasetag, "tag", "", "Release tag")
@@ -23,9 +28,9 @@ func main() {
 
 	switch repo {
 	case "wash":
-		t, err = template.ParseFiles("templates/wash.rb.tmp")
+		t, err = template.ParseFS(content, "templates/wash.rb.tmp")
 	case "wasmcloud":
-		t, err = template.ParseFiles("templates/wasmcloud.rb.tmp")
+		t, err = template.ParseFS(content, "templates/wasmcloud.rb.tmp")
 	default:
 		panic(errors.New("missing required inputs"))
 	}
