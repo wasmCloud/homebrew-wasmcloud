@@ -1,14 +1,11 @@
 class Wash < Formula
   desc "WAsmcloud SHell - A multi-tool for various wasmCloud activities as well as an interactive REPL for a wasmCloud runtime host."
   homepage "https://wasmcloud.dev"
-  url "https://github.com/wasmCloud/wash/archive/{{.ReleaseTag}}.tar.gz"
+  url "https://github.com/jordan-rash/wash/releases/download/{{.ReleaseTag}}/x86_64-macos.tar.gz"
   sha256 "{{.Sha256}}"
   license "Apache-2.0"
 
-  depends_on "rust" => :build
-
   def install
-    system "cargo", "build", "-q", "--release", "--bin", "wash"
     bin.install "target/release/wash"
   end
 
