@@ -1,12 +1,12 @@
 class Wash < Formula
   desc "WAsmcloud SHell - A multi-tool for various wasmCloud activities as well as an interactive REPL for a wasmCloud runtime host."
   homepage "https://wasmcloud.dev"
-  url "https://github.com/jordan-rash/wash/releases/download/{{.ReleaseTag}}/x86_64-macos.tar.gz"
+  url "https://github.com/wasmcloud/wash/releases/download/{{.ReleaseTag}}/x86_64-macos.tar.gz"
   sha256 "{{.Sha256}}"
   license "Apache-2.0"
 
   def install
-    bin.install "target/release/wash"
+    bin.install "x86_64-apple-darwin/release/wash"
   end
 
   test do
