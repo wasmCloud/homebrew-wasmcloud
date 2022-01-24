@@ -7,8 +7,9 @@ class Wasmcloud < Formula
 
   bottle do
     root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wasmcloud-0.18.2"
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, big_sur: "944e4d0cc0d2481a0bfd7c4a92b7db78ae1b71464db9fc417f383ffd7ad449cd"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, big_sur:      "6c3e0f735c5b1a8d769d8496ec8ac687d6d4834f4e7b9f491ac56813ad0f827b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "5ab43acb615aa49c02456c6004125c0bbb336e6f7c1e9d8fd18d1254c56ac39b"
   end
 
   depends_on "rust" => :build
