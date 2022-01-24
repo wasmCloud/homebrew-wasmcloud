@@ -6,6 +6,11 @@ class Wash < Formula
   license "Apache-2.0"
 
   depends_on "rust" => :build
+  depends_on "openssl@1.1"
+
+  on_linux do
+    depends_on "zlib"
+  end
 
   def install
     system "cargo", "install", *std_cargo_args
