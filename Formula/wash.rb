@@ -7,8 +7,8 @@ class Wash < Formula
 
   bottle do
     root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.13.0"
-    sha256 cellar: :any,                 big_sur:      "5902c8863ecc6b887973053a018e7a21965bfa965ce09a9b0a35cc18df778927"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "16defcf3097193c1ed28f918799014f6176cc942fc1e8a50955dad323b469192"
+    sha256 cellar: :any,                 big_sur:      "7f76b4ffb99d6c7076154c5c4fc4eed9e673294e3c8749bc107a49fb3e102118"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "6f423993a4072de2a900ed5cba3f8eb0c96e57b2acc541165725d3218162f52d"
   end
 
   depends_on "rust" => :build
