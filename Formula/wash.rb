@@ -1,8 +1,8 @@
 class Wash < Formula
   desc "WAsmcloud SHell - a comprehensive command-line tool for wasmCloud development"
-  homepage "https://wasmcloud.dev"
-  url "https://github.com/wasmCloud/wash/archive/v0.13.0.tar.gz"
-  sha256 "23986a2bbd3a6635560bd5ea681b77f0a867a22e2d4af2cefb319b5c9ee7a1d2"
+  homepage "https://wasmcloud.com"
+  url "https://github.com/wasmCloud/wash/archive/v0.14.0.tar.gz"
+  sha256 "6fdddd784a50cc74bea6c5f9231eae9213f512acb01f9be279ff72a5bf288beb"
   license "Apache-2.0"
 
   bottle do
@@ -12,7 +12,6 @@ class Wash < Formula
   end
 
   depends_on "rust" => :build
-  depends_on "openssl@1.1"
 
   on_linux do
     depends_on "zlib"
