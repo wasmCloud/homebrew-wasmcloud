@@ -22,6 +22,6 @@ class Wash < Formula
   end
 
   test do
-    system "wash", "-V"
+    system "#{bin}/wash", "-V"
   end
 end
