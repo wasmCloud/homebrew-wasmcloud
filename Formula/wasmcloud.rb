@@ -20,6 +20,6 @@ class Wasmcloud < Formula
   end
 
   test do
-    system "wasmcloud", "-V"
+    system "#{bin}/wasmcloud", "-V"
   end
 end
