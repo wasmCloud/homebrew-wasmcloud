@@ -6,9 +6,9 @@ class Wash < Formula
   license "Apache-2.0"
 
   bottle do
-    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.15.0"
-    sha256 cellar: :any_skip_relocation, big_sur:      "7c17b8f8ad455382abdb0a4fecdc5906e729b4a43772409a67ba9a461fdcf291"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "85c44a20d6291dcf9012979621095c3d4095885b809aa3a9a81014400794ef7e"
+    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.15.1"
+    sha256 cellar: :any_skip_relocation, big_sur:      "3f629847a16c9b089f8a947bc27875d18414b71172fbeacec8da88c19d538942"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "243e06d7f14370ab9a14db8e357767e3eb3416e83041ba6aaada9d83e32b3d3f"
   end
 
   depends_on "rust" => :build
