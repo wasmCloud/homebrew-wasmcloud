@@ -1,8 +1,8 @@
 class Wash < Formula
   desc "WAsmcloud SHell - a comprehensive command-line tool for wasmCloud development"
   homepage "https://wasmcloud.com"
-  url "https://github.com/wasmCloud/wash/archive/v0.17.3.tar.gz"
-  sha256 "9a5404ef46a38fd531d4cf65569521317b90114e96348e43cf90ec63252214bd"
+  url "https://github.com/wasmCloud/wash/archive/v0.17.4.tar.gz"
+  sha256 "71958cf9dc92c1f083989ee28aa05fcff9d104a853bf4a3774c4c2b5f7394aa4"
   license "Apache-2.0"
 
   bottle do
