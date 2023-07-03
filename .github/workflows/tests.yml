@@ -4,8 +4,38 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      wash_version:
+        description: "Version of wash, without the `v`, to release to homebrew"
+        required: true
+        default: "0.18.0"
 jobs:
+  update-release:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare Formula
+        env:
+          WASMCLOUD_URL: https://github.com/wasmCloud/wash/archive/v{{ inputs.wash_version }}.tar.gz
+        run: |
+          template=$(cat ./template/wash.txt)
+          wasmcloud_url=$WASMCLOUD_URL
+          wasmcloud_sha=$(curl -sL $WASMCLOUD_URL | shasum -a 256 | cut -d ' ' -f 1)
+          file_contents=$(echo "$template" | sed "s|WASMCLOUD_URL|$wasmcloud_url|")
+          file_contents=$(echo "$file_contents" | sed "s|WASMCLOUD_SHA|$wasmcloud_sha|")
+          echo "$file_contents" > Formula/wash.rb
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: bump wash to v${{ inputs.wash_version }}
+          title: wash v${{ inputs.wash_version }}
+          body: This is the release of wash v${{ inputs.wash_version }}. Once tests pass properly, add the `pr-pull` label to this PR to release.
+          branch: release/v${{ inputs.wash_version }}
+          signoff: true
   test-bot:
+    if: github.event_name != 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
