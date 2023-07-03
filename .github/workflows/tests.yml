@@ -22,11 +22,10 @@ jobs:
         env:
           WASMCLOUD_URL: https://github.com/wasmCloud/wash/archive/v${{ inputs.wash_version }}.tar.gz
         run: |
-          template=$(cat ./template/wash.txt)
           wasmcloud_url=$WASMCLOUD_URL
           wasmcloud_sha=$(curl -sL $WASMCLOUD_URL | shasum -a 256 | cut -d ' ' -f 1)
 
-          echo "$template" | sed "s|WASMCLOUD_URL|$wasmcloud_url|" | sed "s|WASMCLOUD_SHA|$wasmcloud_sha|" > Formula/wash.rb
+          cat ./template/wash.txt | sed "s|WASMCLOUD_URL|$wasmcloud_url|" | sed "s|WASMCLOUD_SHA|$wasmcloud_sha|" > Formula/wash.rb
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
