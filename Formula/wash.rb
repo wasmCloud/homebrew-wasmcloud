@@ -25,4 +25,3 @@ class Wash < Formula
     system "#{bin}/wash", "-V"
   end
 end
-  
