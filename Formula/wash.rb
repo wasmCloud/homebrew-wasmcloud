@@ -1,14 +1,14 @@
 class Wash < Formula
   desc "WAsmcloud SHell - a comprehensive command-line tool for wasmCloud development"
   homepage "https://wasmcloud.com"
-  url "https://github.com/wasmCloud/wash/archive/v0.20.1.tar.gz"
-  sha256 "4b59baae32930cda54a084fcaad7026cc4dc89a34b191ed4f23abf73ee88cc65"
+  url "https://github.com/wasmCloud/wash/archive/v0.20.2.tar.gz"
+  sha256 "b55b67f65f7f5e2cd0ed785514be8dfc43a5f64f436806e135b8b1b7ffe5a579"
   license "Apache-2.0"
 
   bottle do
-    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.20.1"
-    sha256 cellar: :any_skip_relocation, big_sur:      "5791ac76563cf5f62d24dd31a5576d36e42465ee078cc9b558913d6c1ac4d5da"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "ab0c51c21afbf0a84a8a89b9d54316a57fe376e978227b905a2c97517ac8068d"
+    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.17.4"
+    sha256 cellar: :any_skip_relocation, big_sur:      "6779804593d697ac4b43c501c45ebe04ce3f42cac1e2f9f89f481d20ac5f9dac"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "5c202386e8f361a790f5416193b38888ab18453826f52db74d691c09afbe3e3f"
   end
 
   depends_on "rust"
