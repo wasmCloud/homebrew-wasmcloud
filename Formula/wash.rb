@@ -41,4 +41,8 @@ class Wash < Formula
       end
     end
   end
+
+  test do
+    system "#{bin}/wash", "--version"
+  end
 end
