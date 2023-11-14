@@ -4,6 +4,12 @@ class Wash < Formula
   version "0.23.0"
   license "Apache-2.0"
 
+  bottle do
+    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.23.0"
+    sha256 cellar: :any_skip_relocation, monterey:     "67c82144bb7fb673d7f4e0a6e686f811122bfd195fd6e6b4eb797a2c35bbc1d6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "a2914b468ed3dd845c5fce5677ee0c1a94bdf180a210424462c3342341f276fc"
+  end
+
   on_macos do
     if Hardware::CPU.intel?
       url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.23.0/wash-x86_64-apple-darwin"
