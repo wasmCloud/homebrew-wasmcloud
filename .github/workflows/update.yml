@@ -5,7 +5,7 @@ on:
       wash_version:
         description: "Version of wash, without the `v`, to release to homebrew"
         required: true
-        default: "0.18.0"
+        default: "0.23.0"
 jobs:
   update-release:
     runs-on: ubuntu-latest
@@ -13,12 +13,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Prepare Formula
         env:
-          WASMCLOUD_URL: https://github.com/wasmCloud/wash/archive/v${{ inputs.wash_version }}.tar.gz
+          WASH_VERSION: ${{ inputs.wash_version }}
         run: |
-          wasmcloud_url=$WASMCLOUD_URL
-          wasmcloud_sha=$(curl -sL $WASMCLOUD_URL | shasum -a 256 | cut -d ' ' -f 1)
+          wash_version=$WASH_VERSION
 
-          cat ./template/wash.txt | sed "s|WASMCLOUD_URL|$wasmcloud_url|" | sed "s|WASMCLOUD_SHA|$wasmcloud_sha|" > Formula/wash.rb
+          cat ./template/wash.txt | sed "s|WASH_VERSION|$wash_version|" > Formula/wash.rb
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
