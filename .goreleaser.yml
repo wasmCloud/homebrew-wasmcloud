@@ -1,0 +1,43 @@
+project_name: wash
+
+builds:
+  - main: tmp/main.go
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: wash
+    hooks:
+      post:
+        - ./.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .Path }}
+
+archives:
+  - format: binary
+
+brews:
+  - name: wash
+    goamd64: v1
+    url_template: https://github.com/wasmCloud/wasmCloud/releases/download/{{ indexOrDefault .Env "RELEASE_NAME" "" }}/{{ .Binary }}-{{ if eq .Arch "arm64" }}aarch64{{ else }}x86_64{{ end }}-{{ if eq .Os "darwin" }}apple-darwin{{ else }}unknown-linux-musl{{ end }}
+    license: "Apache-2.0"
+    folder: Formula
+    homepage: "https://wasmcloud.com/"
+    description: "WAsmcloud SHell - a comprehensive command-line tool for wasmCloud development"
+    skip_upload: true
+    test: |
+      system "#{bin}/wash", "-V"
+    install: |
+      bin.install "{{ .Binary }}-{{ if eq .Arch "arm64" }}aarch64{{ else }}x86_64{{ end }}-{{ if eq .Os "darwin" }}apple-darwin{{ else }}unknown-linux-musl{{ end }}" => "{{ .Binary }}"
+    repository:
+      owner: wasmCloud
+      name: homebrew-wasmcloud
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  skip: true
+
+release:
+  disable: true

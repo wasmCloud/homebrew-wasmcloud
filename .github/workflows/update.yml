@@ -1,29 +1,82 @@
 name: brew formula update
+
 on:
   workflow_dispatch:
     inputs:
-      wash_version:
-        description: "Version of wash, without the `v`, to release to homebrew"
+      tag_prefix:
+        description: "Prefix for the release tag to pull from (i.e. wash-cli)"
+        default: "wash-cli"
+        required: false
+        type: string
+      tag_version:
+        description: "Tag to pull"
         required: true
-        default: "0.18.0"
+        type: string
+
 jobs:
   update-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Prepare Formula
-        env:
-          WASMCLOUD_URL: https://github.com/wasmCloud/wash/archive/v${{ inputs.wash_version }}.tar.gz
-        run: |
-          wasmcloud_url=$WASMCLOUD_URL
-          wasmcloud_sha=$(curl -sL $WASMCLOUD_URL | shasum -a 256 | cut -d ' ' -f 1)
+      - uses: actions/checkout@v4
 
-          cat ./template/wash.txt | sed "s|WASMCLOUD_URL|$wasmcloud_url|" | sed "s|WASMCLOUD_SHA|$wasmcloud_sha|" > Formula/wash.rb
+      # This is needed by Goreleaser to build the placeholder Go binary.
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Normalize inputs for pipeline use
+        uses: actions/github-script@v7
+        id: normalize_inputs
+        with:
+          script: |
+            const input_tag = context.payload.inputs.tag_version
+            const input_prefix = context.payload.inputs.tag_prefix
+            const tag_no_v = input_tag.replaceAll('v', '')
+            const tag_with_v = 'v' + tag_no_v
+            const prefix = input_prefix.replace(/^-+/g, '').replace(/-+$/g, '')
+            const release_name = prefix + '-' + tag_with_v
+            core.setOutput('tag_no_v', tag_no_v)
+            core.setOutput('tag_with_v', tag_with_v)
+            core.setOutput('release_name', release_name)
+
+      - name: Download release artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh -R wasmcloud/wasmcloud release download ${{ steps.normalize_inputs.outputs.release_name }} -D tmp/ -p '*apple-darwin*' -p '*unknown-linux*'
+
+      - name: Setup placeholder files for Goreleaser
+        shell: bash
+        run: |
+          mkdir tmp
+          cat <<EOF > tmp/main.go
+          package main
+          func main() {}
+          EOF
+
+      - name: Run Goreleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean --skip validate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_NAME: ${{ steps.normalize_inputs.outputs.release_name }}
+          GORELEASER_CURRENT_TAG: ${{ steps.normalize_inputs.outputs.tag_no_v }}
+
+      - name: Copy the new Formula over
+        run: |
+          cp dist/homebrew/Formula/wash.rb Formula/wash.rb
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: bump wash to v${{ inputs.wash_version }}
-          title: wash v${{ inputs.wash_version }}
-          body: This is the release of wash v${{ inputs.wash_version }}. Once tests pass properly, add the `pr-pull` label to this PR to release.
-          branch: release/v${{ inputs.wash_version }}
+          commit-message: bump wash to ${{ steps.normalize_inputs.outputs.tag_with_v }}
+          title: wash ${{ steps.normalize_inputs.outputs.tag_with_v }}
+          body: This is the release of wash ${{ steps.normalize_inputs.outputs.tag_with_v }}. Once tests pass properly, add the `pr-pull` label to this PR to release.
+          branch: release/${{ steps.normalize_inputs.outputs.release_name }}
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          committer: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
