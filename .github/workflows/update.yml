@@ -1,6 +1,8 @@
 name: brew formula update
 
 on:
+  repository_dispatch:
+    types: [brew-formula-update]
   workflow_dispatch:
     inputs:
       tag_prefix:
@@ -25,13 +27,26 @@ jobs:
         with:
           go-version: 1.21
 
+      - name: Set Variables
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "input_tag=${{ github.event.inputs.tag_version }}" >> $GITHUB_ENV
+          echo "input_prefix=${{ github.event.inputs.tag_prefix }}" >> $GITHUB_ENV
+      - name: Set Variables
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo "input_tag=${{ github.event.client_payload.tag_version }}" >> $GITHUB_ENV
+          echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> $GITHUB_ENV
+
       - name: Normalize inputs for pipeline use
         uses: actions/github-script@v7
         id: normalize_inputs
+        env:
+          input_tag: ${{ env.input_tag }}
+          input_prefix: ${{ env.input_prefix }}
         with:
           script: |
-            const input_tag = context.payload.inputs.tag_version
-            const input_prefix = context.payload.inputs.tag_prefix
+            const { input_tag, input_prefix } = process.env
             const tag_no_v = input_tag.replaceAll('v', '')
             const tag_with_v = 'v' + tag_no_v
             const prefix = input_prefix.replace(/^-+/g, '').replace(/-+$/g, '')
