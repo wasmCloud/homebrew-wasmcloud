@@ -30,13 +30,13 @@ jobs:
       - name: Set Variables
         if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "input_tag=${{ github.event.inputs.tag_version }}" >> $GITHUB_ENV
-          echo "input_prefix=${{ github.event.inputs.tag_prefix }}" >> $GITHUB_ENV
+          echo "input_tag=${{ github.event.inputs.tag_version }}" >> "$GITHUB_ENV"
+          echo "input_prefix=${{ github.event.inputs.tag_prefix }}" >> "$GITHUB_ENV"
       - name: Set Variables
         if: github.event_name == 'repository_dispatch'
         run: |
-          echo "input_tag=${{ github.event.client_payload.tag_version }}" >> $GITHUB_ENV
-          echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> $GITHUB_ENV
+          echo "input_tag=${{ github.event.client_payload.tag_version }}" >> "$GITHUB_ENV"
+          echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> "$GITHUB_ENV"
 
       - name: Normalize inputs for pipeline use
         uses: actions/github-script@v7
