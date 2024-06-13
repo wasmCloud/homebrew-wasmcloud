@@ -5,26 +5,21 @@
 class Wash < Formula
   desc "WAsmcloud SHell - a comprehensive command-line tool for wasmCloud development"
   homepage "https://wasmcloud.com/"
-  version "0.29.0"
+  version "0.29.1"
   license "Apache-2.0"
-
-  bottle do
-    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.29.0"
-    sha256 cellar: :any_skip_relocation, monterey: "25a7869d7526c82aa005a36ca26d934b2565110db008580295924182bccc6238"
-  end
 
   on_macos do
     on_intel do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.0/wash-x86_64-apple-darwin"
-      sha256 "90d26c7e3ddb9da9a36e4a46545ca749ea08d633d42e64681f95ad652f28701c"
+      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.1/wash-x86_64-apple-darwin"
+      sha256 "0dcd8d7ea1974acf56e2afc303e89b16dff5e4edc1855130657e1142e62f8eae"
 
       def install
         bin.install "wash-x86_64-apple-darwin" => "wash"
       end
     end
     on_arm do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.0/wash-aarch64-apple-darwin"
-      sha256 "b0d52aa41788f3cdcc5cd6f21e5104fe103b52b57c8d5f7a7b505f4757399bb8"
+      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.1/wash-aarch64-apple-darwin"
+      sha256 "18a096f60c499a30412dfb091669f20d238b6c0663ae0f01950fb0c7117b73bc"
 
       def install
         bin.install "wash-aarch64-apple-darwin" => "wash"
@@ -35,8 +30,8 @@ class Wash < Formula
   on_linux do
     on_intel do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.0/wash-x86_64-unknown-linux-musl"
-        sha256 "ee4cd6b8866a2582e66eb17ad299f9fa91bcb094ff6125217695e87df767ef27"
+        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.1/wash-x86_64-unknown-linux-musl"
+        sha256 "a9429b4f3449c9e053aee8bcab1e8835b53a58653cfcd856f78e6b5f0bb762f0"
 
         def install
           bin.install "wash-x86_64-unknown-linux-musl" => "wash"
@@ -45,8 +40,8 @@ class Wash < Formula
     end
     on_arm do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.0/wash-aarch64-unknown-linux-musl"
-        sha256 "0e2b96274875c13757f873394b9a1eeab09a7861ebd36a1930681b96004036e1"
+        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.29.1/wash-aarch64-unknown-linux-musl"
+        sha256 "b565e05fbed8d459ebc7b30e502f85bcea41d1e6478784dd595d692891a7479d"
 
         def install
           bin.install "wash-aarch64-unknown-linux-musl" => "wash"
