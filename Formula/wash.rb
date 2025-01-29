@@ -8,16 +8,10 @@ class Wash < Formula
   version "0.38.0"
   license "Apache-2.0"
 
-  bottle do
-    root_url "https://github.com/wasmCloud/homebrew-wasmcloud/releases/download/wash-0.38.0"
-    sha256 cellar: :any_skip_relocation, ventura:      "ab411269cb687da5964f3357d5cf4734ffdf58fa31b2ecac51028498e8856518"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "307b6668d81ef4949b7ce544479c33fcab56602090ba8ad1aec899c8e2adc5a1"
-  end
-
   on_macos do
     on_intel do
       url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.38.0/wash-x86_64-apple-darwin"
-      sha256 "edec0fa45d5ed437322d2813714b5b268d3882bf5ba93f857eefef26f068037b"
+      sha256 "68b167bbadf17c3807f5b09d7b16287f543f4dc36557f998c307856c09d3aabb"
 
       def install
         bin.install "wash-x86_64-apple-darwin" => "wash"
@@ -25,7 +19,7 @@ class Wash < Formula
     end
     on_arm do
       url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-cli-v0.38.0/wash-aarch64-apple-darwin"
-      sha256 "c2d0443264d064c3f975809e945d19fb4180a3a1d21944e43ea261f7c3050450"
+      sha256 "7fdac7caa9eb3ce8f54447d2e35b37f578555de3ab39b26b59b08eb59e01e4cb"
 
       def install
         bin.install "wash-aarch64-apple-darwin" => "wash"
