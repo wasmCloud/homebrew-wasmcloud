@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       tag_prefix:
-        description: "Prefix for the release tag to pull from (i.e. wash-cli)"
-        default: "wash-cli"
+        description: 'Prefix for the release tag to pull from (i.e. wash)'
+        default: 'wash'
         required: false
         type: string
       tag_version:
-        description: "Tag to pull"
+        description: 'Tag to pull'
         required: true
         type: string
 
