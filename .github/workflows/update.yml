@@ -21,12 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@ec59f474b9834571250b370d4735c50f8e2d1e29 # v6.0.2
 
-      # This is needed by Goreleaser to build the placeholder Go binary.
-      - name: Set up Go
-        uses: actions/setup-go@c0f553fe549906ede9cf27b5156039d195d2ece0 # v6.3.0
-        with:
-          go-version: 1.21
-
       - name: Set Variables
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -61,28 +55,9 @@ jobs:
         run: |
           gh -R wasmcloud/wasmcloud release download ${{ steps.normalize_inputs.outputs.release_name }} -D tmp/ -p '*apple-darwin*' -p '*unknown-linux*'
 
-      - name: Setup placeholder files for Goreleaser
-        shell: bash
+      - name: Generate formula
         run: |
-          cat <<EOF > tmp/main.go
-          package main
-          func main() {}
-          EOF
-
-      - name: Run Goreleaser
-        uses: goreleaser/goreleaser-action@ed597411d8f924073f98dfc5c65a23a2325f34cd # v7.0.0
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean --skip validate
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_NAME: ${{ steps.normalize_inputs.outputs.release_name }}
-          GORELEASER_CURRENT_TAG: ${{ steps.normalize_inputs.outputs.tag_no_v }}
-
-      - name: Copy the new Formula over
-        run: |
-          cp dist/homebrew/Formula/wash.rb Formula/wash.rb
+          ./generate-formula.sh ${{ steps.normalize_inputs.outputs.release_name }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v8.1.0

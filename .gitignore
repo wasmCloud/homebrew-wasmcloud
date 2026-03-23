@@ -1,4 +1,2 @@
-# Goreleaser output directory
-dist/
 # Temporary files for update pipeline
 tmp/
