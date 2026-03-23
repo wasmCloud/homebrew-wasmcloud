@@ -7,7 +7,7 @@ on:
     inputs:
       tag_prefix:
         description: 'Prefix for the release tag to pull from (i.e. wash)'
-        default: 'wash'
+        default: ''
         required: false
         type: string
       tag_version:
@@ -19,13 +19,7 @@ jobs:
   update-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      # This is needed by Goreleaser to build the placeholder Go binary.
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.21
+      - uses: actions/checkout@ec59f474b9834571250b370d4735c50f8e2d1e29 # v6.0.2
 
       - name: Set Variables
         if: github.event_name == 'workflow_dispatch'
@@ -39,7 +33,7 @@ jobs:
           echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> "$GITHUB_ENV"
 
       - name: Normalize inputs for pipeline use
-        uses: actions/github-script@v7
+        uses: actions/github-script@4b73464bb391d4059bd26b0524d20df3927bd417 # v8
         id: normalize_inputs
         env:
           input_tag: ${{ env.input_tag }}
@@ -50,7 +44,7 @@ jobs:
             const tag_no_v = input_tag.replaceAll('v', '')
             const tag_with_v = 'v' + tag_no_v
             const prefix = input_prefix.replace(/^-+/g, '').replace(/-+$/g, '')
-            const release_name = prefix + '-' + tag_with_v
+            const release_name = prefix ? prefix + '-' + tag_with_v : tag_with_v
             core.setOutput('tag_no_v', tag_no_v)
             core.setOutput('tag_with_v', tag_with_v)
             core.setOutput('release_name', release_name)
@@ -61,31 +55,12 @@ jobs:
         run: |
           gh -R wasmcloud/wasmcloud release download ${{ steps.normalize_inputs.outputs.release_name }} -D tmp/ -p '*apple-darwin*' -p '*unknown-linux*'
 
-      - name: Setup placeholder files for Goreleaser
-        shell: bash
+      - name: Generate formula
         run: |
-          cat <<EOF > tmp/main.go
-          package main
-          func main() {}
-          EOF
-
-      - name: Run Goreleaser
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean --skip validate
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_NAME: ${{ steps.normalize_inputs.outputs.release_name }}
-          GORELEASER_CURRENT_TAG: ${{ steps.normalize_inputs.outputs.tag_no_v }}
-
-      - name: Copy the new Formula over
-        run: |
-          cp dist/homebrew/Formula/wash.rb Formula/wash.rb
+          ./generate-formula.sh ${{ steps.normalize_inputs.outputs.release_name }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v8.1.0
         with:
           commit-message: bump wash to ${{ steps.normalize_inputs.outputs.tag_with_v }}
           title: wash ${{ steps.normalize_inputs.outputs.tag_with_v }}

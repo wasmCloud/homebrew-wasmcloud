@@ -8,16 +8,16 @@ class Wash < Formula
 
   on_macos do
     on_intel do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-v0.43.0/wash-x86_64-apple-darwin"
-      sha256 "2433eeec8887bd0549cae15fadd04b999790dcb76739f05603a0691c4641b581"
+      url "${BASE_URL}/wash-x86_64-apple-darwin"
+      sha256 "${SHA_X86_64_APPLE_DARWIN}"
 
       define_method(:install) do
         bin.install "wash-x86_64-apple-darwin" => "wash"
       end
     end
     on_arm do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-v0.43.0/wash-aarch64-apple-darwin"
-      sha256 "9ac99538f30a7d2c6d495500ba9b7589ccaf7ce8e32bba18fc70805e6abf9f38"
+      url "${BASE_URL}/wash-aarch64-apple-darwin"
+      sha256 "${SHA_AARCH64_APPLE_DARWIN}"
 
       define_method(:install) do
         bin.install "wash-aarch64-apple-darwin" => "wash"
@@ -28,8 +28,8 @@ class Wash < Formula
   on_linux do
     on_intel do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-v0.43.0/wash-x86_64-unknown-linux-musl"
-        sha256 "cf4d2cd801de892dd8d130c356c85a484c2c261a51863c6e8874423790becbe9"
+        url "${BASE_URL}/wash-x86_64-unknown-linux-musl"
+        sha256 "${SHA_X86_64_UNKNOWN_LINUX_MUSL}"
 
         define_method(:install) do
           bin.install "wash-x86_64-unknown-linux-musl" => "wash"
@@ -38,8 +38,8 @@ class Wash < Formula
     end
     on_arm do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/wash-v0.43.0/wash-aarch64-unknown-linux-musl"
-        sha256 "ae546f852c612eaa844fd484b24654b3ec3d4c85555d7acef5cc15fbdee52455"
+        url "${BASE_URL}/wash-aarch64-unknown-linux-musl"
+        sha256 "${SHA_AARCH64_UNKNOWN_LINUX_MUSL}"
 
         define_method(:install) do
           bin.install "wash-aarch64-unknown-linux-musl" => "wash"
