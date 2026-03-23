@@ -35,6 +35,8 @@ SHA_AARCH64_UNKNOWN_LINUX_MUSL=$(sha256sum "tmp/wash-aarch64-unknown-linux-musl"
 export SHA_X86_64_UNKNOWN_LINUX_MUSL
 SHA_X86_64_UNKNOWN_LINUX_MUSL=$(sha256sum "tmp/wash-x86_64-unknown-linux-musl" | cut -d' ' -f1)
 
-envsubst <Formula/wash.rb.tmpl >Formula/wash.rb
+# shellcheck disable=SC2016
+envsubst '$BASE_URL $SHA_AARCH64_APPLE_DARWIN $SHA_X86_64_APPLE_DARWIN $SHA_AARCH64_UNKNOWN_LINUX_MUSL $SHA_X86_64_UNKNOWN_LINUX_MUSL' \
+  <Formula/wash.rb.tmpl >Formula/wash.rb
 
 echo "Generated Formula/wash.rb for wash ${RELEASE_TAG}"
