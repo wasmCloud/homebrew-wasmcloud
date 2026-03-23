@@ -19,11 +19,11 @@ jobs:
   update-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@ec59f474b9834571250b370d4735c50f8e2d1e29 # v6.0.2
 
       # This is needed by Goreleaser to build the placeholder Go binary.
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@c0f553fe549906ede9cf27b5156039d195d2ece0 # v6.3.0
         with:
           go-version: 1.21
 
@@ -39,7 +39,7 @@ jobs:
           echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> "$GITHUB_ENV"
 
       - name: Normalize inputs for pipeline use
-        uses: actions/github-script@v7
+        uses: actions/github-script@4b73464bb391d4059bd26b0524d20df3927bd417 # v8
         id: normalize_inputs
         env:
           input_tag: ${{ env.input_tag }}
@@ -70,7 +70,7 @@ jobs:
           EOF
 
       - name: Run Goreleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@ed597411d8f924073f98dfc5c65a23a2325f34cd # v7.0.0
         with:
           distribution: goreleaser
           version: latest
@@ -85,7 +85,7 @@ jobs:
           cp dist/homebrew/Formula/wash.rb Formula/wash.rb
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v8.1.0
         with:
           commit-message: bump wash to ${{ steps.normalize_inputs.outputs.tag_with_v }}
           title: wash ${{ steps.normalize_inputs.outputs.tag_with_v }}
