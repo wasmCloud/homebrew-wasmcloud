@@ -8,16 +8,16 @@ class Wash < Formula
 
   on_macos do
     on_intel do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.1/wash-x86_64-apple-darwin"
-      sha256 "b6cd769e364be075310833682f375b3c069e3386e574dd6f84834fa1116302da"
+      url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.3/wash-x86_64-apple-darwin"
+      sha256 "4e75c17b89200af3fab42921d2c7fe2e1071bce24d4daac976c49d0d7d8af90f"
 
       define_method(:install) do
         bin.install "wash-x86_64-apple-darwin" => "wash"
       end
     end
     on_arm do
-      url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.1/wash-aarch64-apple-darwin"
-      sha256 "678eb52a0f268064d550629b6a6e867f175ff2035c657e4e412feb2058244646"
+      url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.3/wash-aarch64-apple-darwin"
+      sha256 "a2dd50f12ce6d21d8d3b28e3e5f45602ee8e386fe5ff3096c6df9c4471195850"
 
       define_method(:install) do
         bin.install "wash-aarch64-apple-darwin" => "wash"
@@ -28,8 +28,8 @@ class Wash < Formula
   on_linux do
     on_intel do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.1/wash-x86_64-unknown-linux-musl"
-        sha256 "3802c552ab823b4e39ba9705efcef1353e49e3780f095d1c7236505296428607"
+        url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.3/wash-x86_64-unknown-linux-musl"
+        sha256 "7a1cdd6d2a22f0c1c615f396c971440b9f12b7bb0aef6e92f80a1381cc9bc2b0"
 
         define_method(:install) do
           bin.install "wash-x86_64-unknown-linux-musl" => "wash"
@@ -38,8 +38,8 @@ class Wash < Formula
     end
     on_arm do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.1/wash-aarch64-unknown-linux-musl"
-        sha256 "362c8137aab08cf3f122039c98e23fc418c91e2bd75b0d66fb354d393433828e"
+        url "https://github.com/wasmCloud/wasmCloud/releases/download/v2.0.3/wash-aarch64-unknown-linux-musl"
+        sha256 "acdfdda68cc18da77b707bb37fdeb6a72747590d570d737a41d35aa58ea198b9"
 
         define_method(:install) do
           bin.install "wash-aarch64-unknown-linux-musl" => "wash"
