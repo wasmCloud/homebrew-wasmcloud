@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_prefix:
-        description: 'Prefix for the release tag to pull from (i.e. wash)'
+        description: 'Optional prefix for the release tag (leave empty for unified tags like v2.0.3)'
         default: ''
         required: false
         type: string
@@ -52,7 +52,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh -R wasmcloud/wasmcloud release download "${{ steps.normalize_inputs.outputs.release_name }}" -D tmp/ -p '*apple-darwin*' -p '*unknown-linux*'
+          gh -R wasmcloud/wasmcloud release download "${{ steps.normalize_inputs.outputs.release_name }}" -D tmp/ -p '*apple-darwin*' -p '*unknown-linux-gnu'
 
       - name: Generate formula
         run: |

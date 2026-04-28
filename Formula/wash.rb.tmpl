@@ -28,21 +28,21 @@ class Wash < Formula
   on_linux do
     on_intel do
       if Hardware::CPU.is_64_bit?
-        url "${BASE_URL}/wash-x86_64-unknown-linux-musl"
-        sha256 "${SHA_X86_64_UNKNOWN_LINUX_MUSL}"
+        url "${BASE_URL}/wash-x86_64-unknown-linux-gnu"
+        sha256 "${SHA_X86_64_UNKNOWN_LINUX_GNU}"
 
         define_method(:install) do
-          bin.install "wash-x86_64-unknown-linux-musl" => "wash"
+          bin.install "wash-x86_64-unknown-linux-gnu" => "wash"
         end
       end
     end
     on_arm do
       if Hardware::CPU.is_64_bit?
-        url "${BASE_URL}/wash-aarch64-unknown-linux-musl"
-        sha256 "${SHA_AARCH64_UNKNOWN_LINUX_MUSL}"
+        url "${BASE_URL}/wash-aarch64-unknown-linux-gnu"
+        sha256 "${SHA_AARCH64_UNKNOWN_LINUX_GNU}"
 
         define_method(:install) do
-          bin.install "wash-aarch64-unknown-linux-musl" => "wash"
+          bin.install "wash-aarch64-unknown-linux-gnu" => "wash"
         end
       end
     end
