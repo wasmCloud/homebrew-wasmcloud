@@ -11,7 +11,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@42435f26fd0824180d7a31f0dd75afd37eb2e18f # master
+        uses: Homebrew/actions/setup-homebrew@18fcb8e3e06b4247c676c506750dc95ea7226479 # master
 
       - name: Set up git
         uses: Homebrew/actions/git-user-config@42435f26fd0824180d7a31f0dd75afd37eb2e18f # master
