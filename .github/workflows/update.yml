@@ -15,56 +15,132 @@ on:
         required: true
         type: string
 
+permissions: {}
+
 jobs:
   update-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Exchanged with octo-sts for the formula-update token.
+      id-token: write
+    env:
+      INPUT_TAG: ${{ github.event.client_payload.tag_version || inputs.tag_version }}
+      INPUT_PREFIX: ${{ github.event.client_payload.tag_prefix || inputs.tag_prefix }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Set Variables
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "input_tag=${{ github.event.inputs.tag_version }}" >> "$GITHUB_ENV"
-          echo "input_prefix=${{ github.event.inputs.tag_prefix }}" >> "$GITHUB_ENV"
-      - name: Set Variables
-        if: github.event_name == 'repository_dispatch'
-        run: |
-          echo "input_tag=${{ github.event.client_payload.tag_version }}" >> "$GITHUB_ENV"
-          echo "input_prefix=${{ github.event.client_payload.tag_prefix }}" >> "$GITHUB_ENV"
-
-      - name: Normalize inputs for pipeline use
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        id: normalize_inputs
-        env:
-          input_tag: ${{ env.input_tag }}
-          input_prefix: ${{ env.input_prefix }}
         with:
-          script: |
-            const { input_tag, input_prefix } = process.env
-            const tag_no_v = input_tag.replace(/^v/, '')
-            const tag_with_v = 'v' + tag_no_v
-            const prefix = input_prefix.replace(/^-+/g, '').replace(/-+$/g, '')
-            const release_name = prefix ? prefix + '-' + tag_with_v : tag_with_v
-            core.setOutput('tag_with_v', tag_with_v)
-            core.setOutput('release_name', release_name)
+          persist-credentials: false
+
+      - name: Normalize inputs
+        id: ver
+        run: |
+          set -euo pipefail
+          version="${INPUT_TAG#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::tag_version must be X.Y.Z or vX.Y.Z, got '${INPUT_TAG}'"
+            exit 1
+          fi
+          prefix="${INPUT_PREFIX}"
+          while [[ "$prefix" == -* ]]; do prefix="${prefix#-}"; done
+          while [[ "$prefix" == *- ]]; do prefix="${prefix%-}"; done
+          if [[ ! "$prefix" =~ ^[a-z0-9-]*$ ]]; then
+            echo "::error::tag_prefix must be lowercase letters, digits and dashes, got '${INPUT_PREFIX}'"
+            exit 1
+          fi
+          release_name="v${version}"
+          if [[ -n "$prefix" ]]; then
+            release_name="${prefix}-v${version}"
+          fi
+          {
+            echo "version=${version}"
+            echo "release_name=${release_name}"
+          } >> "$GITHUB_OUTPUT"
+
+      # Releases can land out of order (a patch on an older minor after a
+      # newer minor), and the tap tracks only the newest.
+      - name: Skip versions the formula already covers
+        id: newer
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          current="$(grep -oE 'releases/download/[^/]*v[0-9]+\.[0-9]+\.[0-9]+/' Formula/wash.rb \
+            | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          newest="$(printf '%s\n%s\n' "$current" "$VERSION" | sort -V | tail -1)"
+          if [[ "$VERSION" == "$current" || "$newest" != "$VERSION" ]]; then
+            echo "::notice::Formula is at ${current}; not moving it to ${VERSION}."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download release artifacts
+        if: steps.newer.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_NAME: ${{ steps.ver.outputs.release_name }}
         run: |
-          gh -R wasmcloud/wasmcloud release download "${{ steps.normalize_inputs.outputs.release_name }}" -D tmp/ -p '*apple-darwin*' -p '*unknown-linux-gnu'
+          gh -R wasmCloud/wasmCloud release download "$RELEASE_NAME" -D tmp/ -p '*apple-darwin*' -p '*unknown-linux-gnu'
 
       - name: Generate formula
-        run: |
-          ./generate-formula.sh "${{ steps.normalize_inputs.outputs.release_name }}"
+        if: steps.newer.outputs.skip == 'false'
+        env:
+          RELEASE_NAME: ${{ steps.ver.outputs.release_name }}
+        run: ./generate-formula.sh "$RELEASE_NAME"
+
+      # An app token (not GITHUB_TOKEN) so the PR runs test-bot without a
+      # maintainer approving the run, and can queue its own auto-merge.
+      - name: Get a formula-update token from octo-sts
+        if: steps.newer.outputs.skip == 'false'
+        id: octo-sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        with:
+          scope: ${{ github.repository }}
+          identity: formula-update
 
       - name: Create Pull Request
+        if: steps.newer.outputs.skip == 'false'
+        id: pr
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          commit-message: bump wash to ${{ steps.normalize_inputs.outputs.tag_with_v }}
-          title: wash ${{ steps.normalize_inputs.outputs.tag_with_v }}
-          body: This is the release of wash ${{ steps.normalize_inputs.outputs.tag_with_v }}. Once tests pass properly, add the `pr-pull` label to this PR to release.
-          branch: release/${{ steps.normalize_inputs.outputs.release_name }}
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          committer: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          token: ${{ steps.octo-sts.outputs.token }}
+          commit-message: bump wash to v${{ steps.ver.outputs.version }}
+          title: wash v${{ steps.ver.outputs.version }}
+          body: |
+            This is the release of wash v${{ steps.ver.outputs.version }}.
+
+            Auto-merge is queued: this PR merges itself once `brew test-bot` passes on macOS and Linux. If a check fails, the formula stays at its current version until this PR is fixed or superseded.
+          branch: release/${{ steps.ver.outputs.release_name }}
+          author: octo-sts[bot] <157150467+octo-sts[bot]@users.noreply.github.com>
+          committer: octo-sts[bot] <157150467+octo-sts[bot]@users.noreply.github.com>
           signoff: true
+
+      - name: Queue auto-merge
+        if: steps.newer.outputs.skip == 'false' && steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          PR: ${{ steps.pr.outputs.pull-request-number }}
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --auto --squash --delete-branch
+
+      - name: Close superseded formula PRs
+        if: steps.newer.outputs.skip == 'false' && steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          PR: ${{ steps.pr.outputs.pull-request-number }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 100 \
+            --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("release/")) | "\(.number) \(.headRefName)"' |
+          while read -r number branch; do
+            old="${branch##*v}"
+            if [[ "$number" == "$PR" || ! "$old" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              continue
+            fi
+            if [[ "$(printf '%s\n%s\n' "$old" "$VERSION" | sort -V | tail -1)" == "$VERSION" ]]; then
+              gh pr close "$number" --repo "$GITHUB_REPOSITORY" --delete-branch \
+                --comment "Superseded by #${PR} (wash v${VERSION})."
+            fi
+          done
